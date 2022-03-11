@@ -1,41 +1,43 @@
-import signaturehelper
-import requests as rq
-import time, os
+from PyInquirer import prompt
 
-CUSTOMER_ID = os.environ['CUSTOMER_ID']
-API_KEY = os.environ['API_KEY']
-SECRET_KEY = os.environ['SECRET_KEY']
+from extract import extract_db, extract_test
+from loader import loader_db, loader_print
 
-BASE_URL = "https://api.naver.com"
+from cli import style, questions
 
-def get_header(method, path):
-  timestamp = str(round(time.time() * 1000))
-  signature = signaturehelper.Signature.generate(
-    timestamp, 
-    method, 
-    path, 
-    SECRET_KEY
-  )
+from naver_ad import search
 
-  return {
-    'Content-Type': 'application/json; charset=UTF-8',
-    'X-Timestamp': timestamp,
-    'X-API-KEY': API_KEY,
-    'X-Customer': str(CUSTOMER_ID),
-    'X-Signature': signature
-  }
+import time
+
+class KeywordAPI():
+  def __init__(self, extractor, loader):
+    self.extractor = extractor
+    self.loader = loader
+
+  def __call__(self):
+    search_keywords = self.extractor()
+    rst = []
+
+    # 너무 빠르게 API를 호출하면 429에러 발생
+    for keyword in search_keywords:
+      rst.append(search(keyword))
+      time.sleep(0.5)
+
+    loader_print(rst)
 
 if __name__ == "__main__":
-  path = '/keywordstool'
-  headers = get_header('GET', path)
-  res = rq.get(
-    f"{BASE_URL}{path}", 
-    headers=headers, 
-    verify=False,
-    params = {
-      "hintKeywords": "python"
-    }
-  )
+  answers = prompt(questions, style=style)
+  extract = extract_test
+  loader = loader_print
   
-  data = res.json()['keywordList'][0]
-  print(f"keyword: {data['relKeyword']}, Pc: { data['monthlyPcQcCnt']}, Mobile: {data['monthlyMobileQcCnt']}")
+  if answers['extract'] == 'oracle':
+    extract = extract_db
+  if answers['loader'] == 'oracle':
+    loader = loader_db
+
+  keyword_api = KeywordAPI(
+    extract, 
+    loader
+  )
+  keyword_api()
+  
