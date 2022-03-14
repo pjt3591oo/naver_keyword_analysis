@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "naver-ad-search"
 version = "0.1.0"
-description = ""
+description = "네이버 검색량 비교"
 authors = ["pjt3591oo <pjt3591oo@gmail.com>"]
 
 [tool.poetry.dependencies]

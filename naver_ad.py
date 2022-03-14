@@ -38,6 +38,7 @@ def _get_header(method, path):
   }
 
 # NAVER SEARCH AD API
+# http://naver.github.io/searchad-apidoc/#/operations/GET/~2Fkeywordstool
 def search(keyword):
   BASE_URL = "https://api.naver.com"
   path = '/keywordstool'
@@ -59,7 +60,8 @@ def search(keyword):
   return data
 
 # NANER DATALAB 
-def dataLabSearch(keyword, start_date, end_date):
+# https://datalab.naver.com/keyword/trendResult.naver
+def dataLabSearch(keyword, start_date, end_date, device):
   BASE_URL = 'https://datalab.naver.com'
   path = '/qcHash.naver'
   headers = {
@@ -72,7 +74,7 @@ def dataLabSearch(keyword, start_date, end_date):
     "startDate" : str(start_date),
     "endDate" : str(end_date),
     "timeUnit" : 'date',
-    'device': 'pc'
+    'device': device # pc: 'pc', mobile: 'mobile', all: ''
   }
 
   res = rq.post(f'{BASE_URL}{path}', verify=False, headers=headers, data=payload)
