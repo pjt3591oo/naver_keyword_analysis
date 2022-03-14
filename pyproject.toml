@@ -7,8 +7,6 @@ authors = ["pjt3591oo <pjt3591oo@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.7"
 requests = "^2.27.1"
-cx-Oracle = "^8.3.0"
-PyInquirer = "^1.0.3"
 bs4 = "^0.0.1"
 
 [tool.poetry.dev-dependencies]

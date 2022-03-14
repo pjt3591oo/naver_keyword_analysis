@@ -2,7 +2,7 @@ import time, os, hashlib, hmac, base64, urllib3, json
 from bs4 import BeautifulSoup
 
 import requests as rq
-
+from date import get_date
 
 urllib3.disable_warnings()
 
@@ -10,7 +10,7 @@ CUSTOMER_ID = os.environ.get('CUSTOMER_ID', '')
 API_KEY = os.environ.get('API_KEY', '')
 SECRET_KEY = os.environ.get('SECRET_KEY', '')
 
-if CUSTOMER_ID or API_KEY or SECRET_KEY:
+if not CUSTOMER_ID or not API_KEY or not SECRET_KEY:
   print('[ERROR] naver api키 설정이 되있지 않습니다.')
 
 def _generate(timestamp, method, path, secret_key):
@@ -53,14 +53,13 @@ def search(keyword):
   )
 
   print(f'[API 결과] HTTP 응답코드: {res.status_code}, API: 키워드 검색: {keyword}') 
-  print(res.json())
+ 
   data = res.json()['keywordList'][0]
   
   return data
 
 # NANER DATALAB 
-
-def dataLabSearch(keyword):
+def dataLabSearch(keyword, start_date, end_date):
   BASE_URL = 'https://datalab.naver.com'
   path = '/qcHash.naver'
   headers = {
@@ -69,23 +68,33 @@ def dataLabSearch(keyword):
     'User-Agent': 'PostmanRuntime/7.29.0'
   }
   payload = {
-    "queryGroups" : '파이썬__SZLIG__파이썬',
-    "startDate" : '20220301',
-    "endDate" : '20220312',
+    "queryGroups" : f'{keyword}__SZLIG__{keyword}',
+    "startDate" : str(start_date),
+    "endDate" : str(end_date),
     "timeUnit" : 'date',
     'device': 'pc'
   }
-  res = rq.post(f'{BASE_URL}{path}', headers=headers, data=payload)
+
+  res = rq.post(f'{BASE_URL}{path}', verify=False, headers=headers, data=payload)
   hashKey = res.json().get('hashKey')
-  print(hashKey)
   url = f'https://datalab.naver.com/keyword/trendResult.naver?hashKey={hashKey}'
-  print(url)
-  res = rq.get(url, headers=headers)
+  
+  res = rq.get(
+    url, 
+    headers=headers,
+    verify=False,
+  )
+
   soup = BeautifulSoup(res.content, 'html.parser')
   data = soup.find(id='graph_data').text
   d = json.loads(data)
+
   return d
 
 if __name__ == "__main__":
-  # print(search("python"))
-  print(dataLabSearch('LFMALL'))
+  d = get_date()
+
+  print(d['day0'])
+  print(d['day1'])
+  print(d['day30'])
+  print(dataLabSearch('LFMALL', d['day0'], d['day30']))

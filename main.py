@@ -1,43 +1,25 @@
-from PyInquirer import prompt
+from naver_ad import search, dataLabSearch
+from pprint import pprint
 
-from extract import extract_db, extract_test
-from loader import loader_db, loader_print
+from date import get_date
 
-from cli import style, questions
+def compare(rate, data):
+  month_pc = rate['monthlyPcQcCnt'] # 날짜 조정이 안됨
+  month_mobile = rate['monthlyMobileQcCnt'] # 날짜 조정이 안됨
 
-from naver_ad import search
+  total = sum([item['value'] for item in data])
 
-import time
+  for item in data:
+    item['day_pc_click'] = item['value'] / total * month_pc
+    item['day_mobile_click'] = item['value'] / total * month_mobile
 
-class KeywordAPI():
-  def __init__(self, extractor, loader):
-    self.extractor = extractor
-    self.loader = loader
+  return data
 
-  def __call__(self):
-    search_keywords = self.extractor()
-    rst = []
-
-    # 너무 빠르게 API를 호출하면 429에러 발생
-    for keyword in search_keywords:
-      rst.append(search(keyword))
-      time.sleep(0.5)
-
-    loader_print(rst)
-
-if __name__ == "__main__":
-  answers = prompt(questions, style=style)
-  extract = extract_test
-  loader = loader_print
+if __name__ == '__main__':
+  keyword = 'LFMALL'
+  rate= search(keyword)
+  date = get_date()
+  data = dataLabSearch(keyword, date['day30'], date['day1'])[0]['data']
+  rst = compare(rate, data)
   
-  if answers['extract'] == 'oracle':
-    extract = extract_db
-  if answers['loader'] == 'oracle':
-    loader = loader_db
-
-  keyword_api = KeywordAPI(
-    extract, 
-    loader
-  )
-  keyword_api()
-  
+  print(rst)

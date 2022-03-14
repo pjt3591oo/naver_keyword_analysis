@@ -8,12 +8,6 @@
 $ export CUSTOMER_ID=
 $ export API_KEY=
 $ export SECRET_KEY=
-
-# 오라클 설정정보
-$ export ORACLE_HOST=
-$ export ORACLE_SID=
-$ export ORACLE_USER=
-$ export ORACLE_PASSWORD=
 ```
 
 * 의존성 모듈 설치
