@@ -8,6 +8,11 @@
 $ export CUSTOMER_ID=
 $ export API_KEY=
 $ export SECRET_KEY=
+
+# 네이버 데이터랩스 API 키
+# https://developers.naver.com/apps/#/myapps/
+export NAVER_LAB_CLIENT_ID=
+export CLIENT_SECRET=
 ```
 
 * 의존성 모듈 설치

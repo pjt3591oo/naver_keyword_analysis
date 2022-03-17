@@ -1,5 +1,5 @@
 from naver_ad import search, dataLabSearchByCrawler
-from date import get_date
+from date import get_date_yyyymmdd
 from pprint import pprint
 
 
@@ -15,11 +15,11 @@ def compare(month_rate, data):
 if __name__ == '__main__':
   keyword = 'LFMALL'
   device_pc = 'pc'
-  device_mobile = 'mobile'
+  device_mobile = 'mo'
 
   rate= search(keyword)
 
-  date = get_date()
+  date = get_date_yyyymmdd()
   pc_data = dataLabSearchByCrawler(keyword, date['day30'], date['day1'], device_pc)[0]['data']
   mobile_data = dataLabSearchByCrawler(keyword, date['day30'], date['day1'], device_mobile)[0]['data']
   
