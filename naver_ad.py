@@ -13,7 +13,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', '')
 if not CUSTOMER_ID or not API_KEY or not SECRET_KEY:
   print('[ERROR] naver api키 설정이 되있지 않습니다.')
 
-def _generate(timestamp, method, path, secret_key):
+def generate_signature(timestamp, method, path, secret_key):
   message = f"{timestamp}.{method}.{path}"
   hash = hmac.new(bytes(secret_key, "utf-8"), bytes(message, "utf-8"), hashlib.sha256)
   hash.hexdigest()
@@ -22,7 +22,7 @@ def _generate(timestamp, method, path, secret_key):
 
 def _get_header(method, path):
   timestamp = str(round(time.time() * 1000))
-  signature = _generate(
+  signature = generate_signature(
     timestamp, 
     method, 
     path, 
@@ -61,7 +61,8 @@ def search(keyword):
 
 # NANER DATALAB 
 # https://datalab.naver.com/keyword/trendResult.naver
-def dataLabSearch(keyword, start_date, end_date, device):
+# TODO: 크롤링 베이스
+def dataLabSearchByCrawler(keyword, start_date, end_date, device):
   BASE_URL = 'https://datalab.naver.com'
   path = '/qcHash.naver'
   headers = {
@@ -94,9 +95,11 @@ def dataLabSearch(keyword, start_date, end_date, device):
   return d
 
 if __name__ == "__main__":
+  r = search('python')
+  print(r)
   d = get_date()
 
   print(d['day0'])
   print(d['day1'])
   print(d['day30'])
-  print(dataLabSearch('LFMALL', d['day0'], d['day30']))
+  print(dataLabSearchByCrawler('LFMALL', d['day0'], d['day30']))

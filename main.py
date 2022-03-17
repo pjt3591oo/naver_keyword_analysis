@@ -1,4 +1,4 @@
-from naver_ad import search, dataLabSearch
+from naver_ad import search, dataLabSearchByCrawler
 from date import get_date
 from pprint import pprint
 
@@ -20,13 +20,14 @@ if __name__ == '__main__':
   rate= search(keyword)
 
   date = get_date()
-  pc_data = dataLabSearch(keyword, date['day30'], date['day1'], device_pc)[0]['data']
-  mobile_data = dataLabSearch(keyword, date['day30'], date['day1'], device_mobile)[0]['data']
+  pc_data = dataLabSearchByCrawler(keyword, date['day30'], date['day1'], device_pc)[0]['data']
+  mobile_data = dataLabSearchByCrawler(keyword, date['day30'], date['day1'], device_mobile)[0]['data']
   
   print(pc_data)  
   
   rst_pc = compare(rate['monthlyPcQcCnt'], pc_data)
   rst_mobile = compare(rate['monthlyMobileQcCnt'], mobile_data)
   
-  pprint(rst_pc[-10:-1])
-  pprint(rst_mobile[-10:-1])
+  pprint(rst_pc)
+  print()
+  pprint(rst_mobile)
